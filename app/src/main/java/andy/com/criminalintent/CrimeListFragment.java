@@ -41,8 +41,8 @@ public class CrimeListFragment extends ListFragment {
         //既然已转换为 CrimeAdapter 类，自然也获得了类型检查的能力。 CrimeAdapter 只能容纳Crime 对象，因此 Crime 类的强制类型转换也就不需要了
         Crime c = ((CrimeAdapter)getListAdapter()).getItem(position);
         //Log.d(TAG, c.getmTitle() + "was clicked");
-        //打开crimeActivity
-        Intent i = new Intent(getActivity(), CrimeActivity.class);
+        //打开crimePagerActivity with this crime
+        Intent i = new Intent(getActivity(), CrimePagerActivity.class);
         i.putExtra(CrimeFragment.EXTRA_CRIME_ID, c.getmId());
         startActivity(i);
     }
@@ -74,5 +74,12 @@ public class CrimeListFragment extends ListFragment {
 
             return convertView;
         }
+    }
+
+    //重新加载被修改的显示列表项
+    @Override
+    public void onResume() {
+        super.onResume();
+        ((CrimeAdapter)getListAdapter()).notifyDataSetChanged();
     }
 }
