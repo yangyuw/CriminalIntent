@@ -1,6 +1,7 @@
 package andy.com.criminalintent;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -13,14 +14,30 @@ public class CrimeLab {//创建单例
     private Context mAppContext;
     private ArrayList<Crime> mCrimes;
 
+    private static final String TAG = "CrimeLab";
+    private static final String FILENAME = "crime.json";
+    private CriminalIntentJSONSerializer mSerializer;
+
+    public boolean saveCrimes() {
+        try {
+            mSerializer.saveCrimes(mCrimes);
+            Log.d(TAG, "保存成功！！");
+            return true;
+        } catch (Exception e) {
+            Log.e(TAG, "保存失败！！！:", e);
+            return false;
+        }
+    }
+
     private CrimeLab (Context appContext){//私有的构造方法
         mAppContext = appContext;
-        mCrimes = new ArrayList<Crime>();
-        for (int i = 0; i < 100; i++){
-            Crime c = new Crime();
-            c.setmTitle("Crime #" + i);
-            c.setmSolved(i % 2 == 0);//every other one
-            mCrimes.add(c);
+        mSerializer = new CriminalIntentJSONSerializer(mAppContext, FILENAME);
+
+        try {
+            mCrimes = mSerializer.loadCrimes();
+        } catch (Exception e) {
+            mCrimes = new ArrayList<>();
+            Log.e(TAG, "ERROR loading Crimes:", e);
         }
     }
 
@@ -42,5 +59,9 @@ public class CrimeLab {//创建单例
             }
         }
         return null;
+    }
+
+    public void addCrime(Crime c) {
+        mCrimes.add(c);
     }
 }
